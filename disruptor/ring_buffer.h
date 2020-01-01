@@ -23,8 +23,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_MEMORIA_RING_BUFFER_H_  // NOLINT
-#define DISRUPTOR_MEMORIA_RING_BUFFER_H_  // NOLINT
+#pragma once
 
 #include <array>
 #include "utils.h"
@@ -39,36 +38,41 @@ constexpr size_t kDefaultRingBufferSize = 1024;
 // @param <N> size of the ring
 template <typename T, size_t N = kDefaultRingBufferSize>
 class RingBuffer {
- public:
-  // Construct a RingBuffer with the full option set.
-  //
-  // @param event_factory to instance new entries for filling the RingBuffer.
-  // @param buffer_size of the RingBuffer, must be a power of 2.
-  // @param claim_strategy_option threading strategy for publishers claiming
-  // entries in the ring.
-  // @param wait_strategy_option waiting strategy employed by
-  // processors_to_track waiting in entries becoming available.
-  RingBuffer(const std::array<T, N>& events) : events_(events) {}
+public:
+    // Construct a RingBuffer with the full option set.
+    //
+    // @param event_factory to instance new entries for filling the RingBuffer.
+    // @param buffer_size of the RingBuffer, must be a power of 2.
+    // @param claim_strategy_option threading strategy for publishers claiming
+    // entries in the ring.
+    // @param wait_strategy_option waiting strategy employed by
+    // processors_to_track waiting in entries becoming available.
+    RingBuffer ( const std::array<T, N>& events ) : events_ ( events ) {}
+    RingBuffer () : events_ {} {}
 
-  static_assert(((N > 0) && ((N & (~N + 1)) == N)),
-                "RingBuffer's size must be a positive power of 2");
+    static_assert ( ( ( N > 0 ) && ( ( N & ( ~N + 1 ) ) == N ) ), 
+                    "RingBuffer's size must be a positive power of 2" );
 
-  // Get the event for a given sequence in the RingBuffer.
-  //
-  // @param sequence for the event
-  // @return event reference at the specified sequence position.
-  T& operator[](const int64_t& sequence) { return events_[sequence & (N - 1)]; }
+    // Get the event for a given sequence in the RingBuffer.
+    //
+    // @param sequence for the event
+    // @return event reference at the specified sequence position.
+    T& operator[] ( const int64_t& sequence )
+    {
+        return events_[sequence & ( N - 1 )];
+    }
 
-  const T& operator[](const int64_t& sequence) const {
-    return events_[sequence & (N - 1)];
-  }
+    const T& operator[] ( const int64_t& sequence ) const
+    {
+        return events_[sequence & ( N - 1 )];
+    }
 
- private:
-  std::array<T, N> events_;
+private:
+    std::array<T, N> events_;
 
-  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(RingBuffer);
+    MMA_DISALLOW_COPY_MOVE_AND_ASSIGN ( RingBuffer );
 };
 
-};  // namespace disruptor
+}
 
-#endif  // DISRUPTOR_MEMORIA_RING_BUFFER_H_ NOLINT
+

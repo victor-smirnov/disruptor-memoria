@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2015, Francois Saint-Jacques
+// Copyright (c) 2017 Victor Smirnov
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -23,89 +24,110 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_MEMORIA_SEQUENCER_H_  // NOLINT
-#define DISRUPTOR_MEMORIA_SEQUENCER_H_  // NOLINT
+#pragma once
 
 #include "claim_strategy.h"
 #include "wait_strategy.h"
 #include "sequence_barrier.h"
 
+#include <memory>
+
+
 namespace disruptor_memoria {
+
+using std::make_unique;
 
 // Coordinator for claiming sequences for access to a data structures while
 // tracking dependent {@link Sequence}s
 template <typename T, size_t N = kDefaultRingBufferSize,
-          typename C = kDefaultClaimStrategy, typename W = kDefaultWaitStrategy>
-class Sequencer {
- public:
-  // Construct a Sequencer with the selected strategies.
-  Sequencer(std::array<T, N> events) : ring_buffer_(events) {}
+          typename C = kDefaultClaimStrategy, typename W = kDefaultWaitStrategy, template <typename> class Container = StdVector>
+class Sequencer
+{
+public:
+    // Construct a Sequencer with the selected strategies.
+    Sequencer ( std::array<T, N> events ) : ring_buffer_ ( events ) {}
 
-  // Set the sequences that will gate publishers to prevent the buffer
-  // wrapping.
-  //
-  // @param sequences to be gated on.
-  void set_gating_sequences(const std::vector<Sequence*>& sequences) {
-    gating_sequences_ = sequences;
-  }
 
-  // Create a {@link SequenceBarrier} that gates on the cursor and a list of
-  // {@link Sequence}s.
-  //
-  // @param sequences_to_track this barrier will track.
-  // @return the barrier gated as required.
-  SequenceBarrier<W> NewBarrier(const std::vector<Sequence*>& dependents) {
-    return SequenceBarrier<W>(cursor_, dependents);
-  }
+    // Set the sequences that will gate publishers to prevent the buffer
+    // wrapping.
+    //
+    // @param sequences to be gated on.
+    void set_gating_sequences ( const Container<Sequence*>& sequences )
+    {
+        gating_sequences_ = sequences;
+    }
 
-  // Get the value of the cursor indicating the published sequence.
-  //
-  // @return value of the cursor for events that have been published.
-  int64_t GetCursor() { return cursor_.sequence(); }
+    // Create a {@link SequenceBarrier} that gates on the cursor and a list of
+    // {@link Sequence}s.
+    //
+    // @param sequences_to_track this barrier will track.
+    // @return the barrier gated as required.
+    std::unique_ptr<SequenceBarrier<W, Container>> NewBarrier ( const Container<Sequence*>& dependents = Container<Sequence*>())
+    {
+        return std::make_unique<SequenceBarrier<W, Container>> ( cursor_, dependents );
+    }
 
-  // Has the buffer capacity left to allocate another sequence. This is a
-  // concurrent method so the response should only be taken as an indication
-  // of available capacity.
-  //
-  // @return true if the buffer has the capacity to allocated another event.
-  bool HasAvailableCapacity() {
-    return claim_strategy_.HasAvailableCapacity(gating_sequences_);
-  }
+    // Get the value of the cursor indicating the published sequence.
+    //
+    // @return value of the cursor for events that have been published.
+    int64_t GetCursor()
+    {
+        return cursor_.sequence();
+    }
 
-  // Claim the next batch of sequence numbers for publishing.
-  //
-  // @param delta  the requested number of sequences.
-  // @return the maximal claimed sequence
-  int64_t Claim(size_t delta = 1) {
-    return claim_strategy_.IncrementAndGet(gating_sequences_, delta);
-  }
+    // Has the buffer capacity left to allocate another sequence. This is a
+    // concurrent method so the response should only be taken as an indication
+    // of available capacity.
+    //
+    // @return true if the buffer has the capacity to allocated another event.
+    bool HasAvailableCapacity()
+    {
+        return claim_strategy_.HasAvailableCapacity ( gating_sequences_ );
+    }
 
-  // Publish an event and make it visible to {@link EventProcessor}s.
-  //
-  // @param sequence to be published.
-  void Publish(const int64_t& sequence, size_t delta = 1) {
-    claim_strategy_.SynchronizePublishing(sequence, cursor_, delta);
-    const int64_t new_cursor = cursor_.IncrementAndGet(delta);
-    wait_strategy_.SignalAllWhenBlocking();
-  }
+    // Claim the next batch of sequence numbers for publishing.
+    //
+    // @param delta  the requested number of sequences.
+    // @return the maximal claimed sequence
+    int64_t Claim ( size_t delta = 1 )
+    {
+        return claim_strategy_.IncrementAndGet ( gating_sequences_, delta );
+    }
 
-  T& operator[](const int64_t& sequence) { return ring_buffer_[sequence]; }
+    // Publish an event and make it visible to {@link EventProcessor}s.
+    //
+    // @param sequence to be published.
+    void Publish ( const int64_t& sequence, size_t delta = 1 )
+    {
+        claim_strategy_.SynchronizePublishing ( sequence, cursor_, delta );
+        cursor_.IncrementAndGet ( delta );
+        wait_strategy_.SignalAllWhenBlocking();
+    }
 
- private:
-  // Members
-  RingBuffer<T, N> ring_buffer_;
+    T& operator[] (const int64_t& sequence)
+    {
+        return ring_buffer_[sequence];
+    }
 
-  Sequence cursor_;
+    RingBuffer<T, N>& ring_buffer() {return ring_buffer_;}
+    const RingBuffer<T, N>& ring_buffer() const {return ring_buffer_;}
 
-  C claim_strategy_;
+    Sequence& cursor() {return cursor_;}
+    const Sequence& cursor() const {return cursor_;}
 
-  W wait_strategy_;
+private:
+    // Members
+    RingBuffer<T, N> ring_buffer_;
 
-  std::vector<Sequence*> gating_sequences_;
+    Sequence cursor_; // producer idx
 
-  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(Sequencer);
+    C claim_strategy_;
+
+    W wait_strategy_;
+
+    Container<Sequence*> gating_sequences_; // consumer idx
+
+    MMA_DISALLOW_COPY_MOVE_AND_ASSIGN ( Sequencer );
 };
 
-};  // namespace disruptor
-
-#endif  // DISRUPTOR_MEMORIA_RING_BUFFER_H_ NOLINT
+}

@@ -41,11 +41,11 @@ struct SequenceBarrierFixture {
   Sequence sequence_1;
   Sequence sequence_2;
   Sequence sequence_3;
-  std::vector<Sequence*> dependents;
-  SequenceBarrier<> barrier;
+  StdVector<Sequence*> dependents;
+  SequenceBarrier<kDefaultWaitStrategy> barrier;
 
-  std::vector<Sequence*> allDependents() {
-    std::vector<Sequence*> d = {&sequence_1, &sequence_2, &sequence_3};
+  StdVector<Sequence*> allDependents() {
+    StdVector<Sequence*> d = {&sequence_1, &sequence_2, &sequence_3};
     return d;
   }
 };
@@ -83,5 +83,4 @@ BOOST_AUTO_TEST_CASE(WaitForCursor) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-};  // namespace test
-};  // namespace disruptor
+}}

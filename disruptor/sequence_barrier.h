@@ -23,52 +23,58 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_MEMORIA_SEQUENCE_BARRIER_H_  // NOLINT
-#define DISRUPTOR_MEMORIA_SEQUENCE_BARRIER_H_  // NOLINT
-
-#include <memory>
-#include <vector>
+#pragma once
 
 #include "wait_strategy.h"
 #include "sequence.h"
 
+#include <memory>
+#include <vector>
+#include <iostream>
+
 namespace disruptor_memoria {
 
-template <typename W = kDefaultWaitStrategy>
-class SequenceBarrier {
- public:
-  SequenceBarrier(const Sequence& cursor,
-                  const std::vector<Sequence*>& dependents)
-      : cursor_(cursor), dependents_(dependents), alerted_(false) {}
 
-  int64_t WaitFor(const int64_t& sequence) {
-    return wait_strategy_.WaitFor(sequence, cursor_, dependents_, alerted_);
-  }
 
-  template <class R, class P>
-  int64_t WaitFor(const int64_t& sequence,
-                  const std::chrono::duration<R, P>& timeout) {
-    return wait_strategy_.WaitFor(sequence, cursor_, dependents_, alerted_,
-                                  timeout);
-  }
+template <typename W, template <typename> class Container = StdVector>
+class SequenceBarrier
+{
+public:
+    SequenceBarrier ( const Sequence& cursor, const Container<Sequence*>& dependents)
+        : cursor_ ( cursor ), dependents_ ( dependents ), alerted_ ( false )
+    {}
 
-  int64_t get_sequence() const { return cursor_.sequence(); }
+    int64_t WaitFor ( const int64_t& sequence )
+    {
+        return wait_strategy_.WaitFor ( sequence, cursor_, dependents_, alerted_ );
+    }
 
-  bool alerted() const {
-    return alerted_.load(std::memory_order::memory_order_acquire);
-  }
+    template <class R, class P>
+    int64_t WaitFor ( const int64_t& sequence, const std::chrono::duration<R, P>& timeout )
+    {
+        return wait_strategy_.WaitFor ( sequence, cursor_, dependents_, alerted_, timeout );
+    }
 
-  void set_alerted(bool alert) {
-    alerted_.store(alert, std::memory_order::memory_order_release);
-  }
+    int64_t get_sequence() const
+    {
+        return cursor_.sequence();
+    }
 
- private:
-  W wait_strategy_;
-  const Sequence& cursor_;
-  std::vector<Sequence*> dependents_;
-  std::atomic<bool> alerted_;
+    bool alerted() const
+    {
+        return alerted_.load ( std::memory_order::memory_order_acquire );
+    }
+
+    void set_alerted ( bool alert )
+    {
+        alerted_.store ( alert, std::memory_order::memory_order_release );
+    }
+
+private:
+    W wait_strategy_;
+    const Sequence& cursor_; // producer
+    Container<Sequence*> dependents_;
+    std::atomic<bool> alerted_;
 };
 
-};  // namespace disruptor
-
-#endif  // DISRUPTOR_MEMORIA_DEPENDENCY_BARRIER_H_ NOLINT
+}

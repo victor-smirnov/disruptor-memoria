@@ -30,7 +30,6 @@
 #include <iostream>
 
 #include <boost/test/unit_test.hpp>
-
 #include <disruptor/sequencer.h>
 
 #define RING_BUFFER_SIZE 4
@@ -48,9 +47,10 @@ struct SequencerFixture {
     }
   }
 
+  std::array<long, RING_BUFFER_SIZE> events;
   Sequencer<long, RING_BUFFER_SIZE, SingleThreadedStrategy<RING_BUFFER_SIZE>,
             kDefaultWaitStrategy> sequencer;
-  std::array<long, RING_BUFFER_SIZE> events;
+
 };
 
 BOOST_FIXTURE_TEST_SUITE(SequencerBasic, SequencerFixture)

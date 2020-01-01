@@ -23,6 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#pragma once
+
 #ifndef CACHE_LINE_SIZE_IN_BYTES     // NOLINT
 #define CACHE_LINE_SIZE_IN_BYTES 64  // NOLINT
 #endif                               // NOLINT
@@ -30,12 +32,13 @@
   (CACHE_LINE_SIZE_IN_BYTES - sizeof(std::atomic<int64_t>)) / 8
 #define SEQUENCE_PADDING_LENGTH (CACHE_LINE_SIZE_IN_BYTES - sizeof(int64_t)) / 8
 
-#ifndef DISRUPTOR_MEMORIA_SEQUENCE_H_  // NOLINT
-#define DISRUPTOR_MEMORIA_SEQUENCE_H_  // NOLINT
-
-#include <atomic>
 
 #include "utils.h"
+
+#include <atomic>
+#include <vector>
+#include <limits.h>
+#include <memory>
 
 namespace disruptor_memoria {
 
@@ -43,63 +46,69 @@ namespace disruptor_memoria {
 constexpr int64_t kInitialCursorValue = -1L;
 constexpr int64_t kAlertedSignal = -2L;
 constexpr int64_t kTimeoutSignal = -3L;
+constexpr int64_t kNotReadySignal = -4L;
 constexpr int64_t kFirstSequenceValue = kInitialCursorValue + 1L;
 
+template <typename T>
+using StdVector = std::vector<T>;
+
 // Sequence counter.
-class Sequence {
- public:
-  // Construct a sequence counter that can be tracked across threads.
-  //
-  // @param initial_value for the counter.
-  Sequence(int64_t initial_value = kInitialCursorValue)
-      : sequence_(initial_value) {}
+class Sequence
+{
+public:
+    // Construct a sequence counter that can be tracked across threads.
+    //
+    // @param initial_value for the counter.
+    Sequence ( int64_t initial_value = kInitialCursorValue )
+        : sequence_ ( initial_value ) {}
 
-  // Get the current value of the {@link Sequence}.
-  //
-  // @return the current value.
-  int64_t sequence() const {
-    return sequence_.load(std::memory_order::memory_order_acquire);
-  }
+    // Get the current value of the {@link Sequence}.
+    //
+    // @return the current value.
+    int64_t sequence() const
+    {
+        return sequence_.load ( std::memory_order::memory_order_acquire );
+    }
 
-  // Set the current value of the {@link Sequence}.
-  //
-  // @param the value to which the {@link Sequence} will be set.
-  void set_sequence(int64_t value) {
-    sequence_.store(value, std::memory_order::memory_order_release);
-  }
+    // Set the current value of the {@link Sequence}.
+    //
+    // @param the value to which the {@link Sequence} will be set.
+    void set_sequence ( int64_t value )
+    {
+        sequence_.store ( value, std::memory_order::memory_order_release );
+    }
 
-  // Increment and return the value of the {@link Sequence}.
-  //
-  // @param increment the {@link Sequence}.
-  // @return the new value incremented.
-  int64_t IncrementAndGet(const int64_t& increment) {
-    return sequence_.fetch_add(increment,
-                               std::memory_order::memory_order_release) +
-           increment;
-  }
+    // Increment and return the value of the {@link Sequence}.
+    //
+    // @param increment the {@link Sequence}.
+    // @return the new value incremented.
+    int64_t IncrementAndGet ( const int64_t& increment )
+    {
+        return sequence_.fetch_add ( increment, std::memory_order::memory_order_release ) + increment;
+    }
 
- private:
-  // padding
-  int64_t padding0_[ATOMIC_SEQUENCE_PADDING_LENGTH];
-  // members
-  std::atomic<int64_t> sequence_;
-  // padding
-  int64_t padding1_[ATOMIC_SEQUENCE_PADDING_LENGTH];
+private:
+    // padding
+    int64_t padding0_[ATOMIC_SEQUENCE_PADDING_LENGTH];
+    // members
+    std::atomic<int64_t> sequence_;
+    // padding
+    int64_t padding1_[ATOMIC_SEQUENCE_PADDING_LENGTH];
 
-  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(Sequence);
+    MMA_DISALLOW_COPY_MOVE_AND_ASSIGN ( Sequence );
 };
 
-int64_t GetMinimumSequence(const std::vector<Sequence*>& sequences) {
-  int64_t minimum = LONG_MAX;
+template <typename Container>
+int64_t GetMinimumSequence ( const Container& sequences )
+{
+    int64_t minimum = LONG_MAX;
 
-  for (Sequence* sequence_ : sequences) {
-    const int64_t sequence = sequence_->sequence();
-    minimum = minimum < sequence ? minimum : sequence;
-  }
+    for ( Sequence* sequence_ : sequences ) {
+        const int64_t sequence = sequence_->sequence();
+        minimum = minimum < sequence ? minimum : sequence;
+    }
 
-  return minimum;
+    return minimum;
 };
 
-};  // namespace disruptor
-
-#endif  // DISRUPTOR_MEMORIA_SEQUENCE_H_ NOLINT
+}
