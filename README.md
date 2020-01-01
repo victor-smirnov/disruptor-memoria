@@ -1,8 +1,10 @@
 disruptor--
 ===========
+
+
 [![Build Status](https://travis-ci.org/fsaintjacques/disruptor--.svg?branch=develop)](https://travis-ci.org/fsaintjacques/disruptor--) [![Coverage Status](https://coveralls.io/repos/fsaintjacques/disruptor--/badge.svg?branch=develop)](https://coveralls.io/r/fsaintjacques/disruptor--?branch=develop)
 
-C++ implementation of LMAX's disruptor pattern.
+C++ implementation of LMAX's disruptor pattern. This project is a fork of original [disruptor-- queue](https://github.com/fsaintjacques/disruptor--) by Francois Saint-Jacques. It was adapted specifically for [Memoria](https://bitbucket.org/vsmirnov/memoria/wiki/Home) project. 
 
 Supported compilers:
   - clang-3.5
