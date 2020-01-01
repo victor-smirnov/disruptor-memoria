@@ -63,24 +63,26 @@ endif()
 # tests
 enable_testing()
 
+set(ExtraLIBS pthread)
+
 add_executable(sequence_test_bin test/sequence_test.cc)
-target_link_libraries(sequence_test_bin ${Boost_LIBRARIES})
+target_link_libraries(sequence_test_bin ${Boost_LIBRARIES} ${ExtraLIBS})
 add_test(sequence_test sequence_test_bin)
 
 add_executable(ring_buffer_test_bin test/ring_buffer_test.cc)
-target_link_libraries(ring_buffer_test_bin ${Boost_LIBRARIES})
+target_link_libraries(ring_buffer_test_bin ${Boost_LIBRARIES} ${ExtraLIBS})
 add_test(ring_buffer_test ring_buffer_test_bin)
 
 add_executable(wait_strategy_test_bin test/wait_strategy_test.cc)
-target_link_libraries(wait_strategy_test_bin ${Boost_LIBRARIES})
+target_link_libraries(wait_strategy_test_bin ${Boost_LIBRARIES} ${ExtraLIBS})
 add_test(wait_strategy_test wait_strategy_test_bin)
 
 add_executable(sequence_barrier_test_bin test/sequence_barrier_test.cc)
-target_link_libraries(sequence_barrier_test_bin ${Boost_LIBRARIES})
+target_link_libraries(sequence_barrier_test_bin ${Boost_LIBRARIES} ${ExtraLIBS})
 add_test(sequence_barrier_test sequence_barrier_test_bin)
 
 add_executable(claim_strategy_test_bin test/claim_strategy_test.cc)
-target_link_libraries(claim_strategy_test_bin ${Boost_LIBRARIES})
+target_link_libraries(claim_strategy_test_bin ${Boost_LIBRARIES} ${ExtraLIBS})
 add_test(claim_strategy_test claim_strategy_test_bin)
 
 add_executable(sequencer_test_bin test/sequencer_test.cc)
