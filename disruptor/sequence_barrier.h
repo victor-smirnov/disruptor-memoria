@@ -23,16 +23,16 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_SEQUENCE_BARRIER_H_  // NOLINT
-#define DISRUPTOR_SEQUENCE_BARRIER_H_  // NOLINT
+#ifndef DISRUPTOR_MEMORIA_SEQUENCE_BARRIER_H_  // NOLINT
+#define DISRUPTOR_MEMORIA_SEQUENCE_BARRIER_H_  // NOLINT
 
 #include <memory>
 #include <vector>
 
-#include "disruptor/wait_strategy.h"
-#include "disruptor/sequence.h"
+#include "wait_strategy.h"
+#include "sequence.h"
 
-namespace disruptor {
+namespace disruptor_memoria {
 
 template <typename W = kDefaultWaitStrategy>
 class SequenceBarrier {
@@ -71,4 +71,4 @@ class SequenceBarrier {
 
 };  // namespace disruptor
 
-#endif  // DISRUPTOR_DEPENDENCY_BARRIER_H_ NOLINT
+#endif  // DISRUPTOR_MEMORIA_DEPENDENCY_BARRIER_H_ NOLINT

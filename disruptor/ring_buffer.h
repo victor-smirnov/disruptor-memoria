@@ -23,13 +23,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_RING_BUFFER_H_  // NOLINT
-#define DISRUPTOR_RING_BUFFER_H_  // NOLINT
+#ifndef DISRUPTOR_MEMORIA_RING_BUFFER_H_  // NOLINT
+#define DISRUPTOR_MEMORIA_RING_BUFFER_H_  // NOLINT
 
 #include <array>
 #include "utils.h"
 
-namespace disruptor {
+namespace disruptor_memoria {
 
 constexpr size_t kDefaultRingBufferSize = 1024;
 
@@ -66,9 +66,9 @@ class RingBuffer {
  private:
   std::array<T, N> events_;
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(RingBuffer);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(RingBuffer);
 };
 
 };  // namespace disruptor
 
-#endif  // DISRUPTOR_RING_BUFFER_H_ NOLINT
+#endif  // DISRUPTOR_MEMORIA_RING_BUFFER_H_ NOLINT

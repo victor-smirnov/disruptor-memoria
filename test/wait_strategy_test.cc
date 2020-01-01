@@ -29,7 +29,7 @@
 
 #include <disruptor/wait_strategy.h>
 
-namespace disruptor {
+namespace disruptor_memoria {
 namespace test {
 
 template <typename W>

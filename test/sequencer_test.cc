@@ -35,7 +35,7 @@
 
 #define RING_BUFFER_SIZE 4
 
-namespace disruptor {
+namespace disruptor_memoria {
 namespace test {
 
 struct SequencerFixture {

@@ -31,7 +31,7 @@
 #include <boost/test/unit_test.hpp>
 #include <disruptor/sequence_barrier.h>
 
-namespace disruptor {
+namespace disruptor_memoria {
 namespace test {
 
 struct SequenceBarrierFixture {

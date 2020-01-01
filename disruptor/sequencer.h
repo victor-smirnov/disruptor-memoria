@@ -23,14 +23,14 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_SEQUENCER_H_  // NOLINT
-#define DISRUPTOR_SEQUENCER_H_  // NOLINT
+#ifndef DISRUPTOR_MEMORIA_SEQUENCER_H_  // NOLINT
+#define DISRUPTOR_MEMORIA_SEQUENCER_H_  // NOLINT
 
-#include "disruptor/claim_strategy.h"
-#include "disruptor/wait_strategy.h"
-#include "disruptor/sequence_barrier.h"
+#include "claim_strategy.h"
+#include "wait_strategy.h"
+#include "sequence_barrier.h"
 
-namespace disruptor {
+namespace disruptor_memoria {
 
 // Coordinator for claiming sequences for access to a data structures while
 // tracking dependent {@link Sequence}s
@@ -103,9 +103,9 @@ class Sequencer {
 
   std::vector<Sequence*> gating_sequences_;
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(Sequencer);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(Sequencer);
 };
 
 };  // namespace disruptor
 
-#endif  // DISRUPTOR_RING_BUFFER_H_ NOLINT
+#endif  // DISRUPTOR_MEMORIA_RING_BUFFER_H_ NOLINT

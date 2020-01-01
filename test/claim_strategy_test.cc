@@ -31,7 +31,7 @@
 
 #define RING_BUFFER_SIZE 8
 
-namespace disruptor {
+namespace disruptor_memoria {
 namespace test {
 
 template <typename S>

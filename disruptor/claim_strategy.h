@@ -23,15 +23,15 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_CLAIM_STRATEGY_H_  // NOLINT
-#define DISRUPTOR_CLAIM_STRATEGY_H_  // NOLINT
+#ifndef DISRUPTOR_MEMORIA_CLAIM_STRATEGY_H_  // NOLINT
+#define DISRUPTOR_MEMORIA_CLAIM_STRATEGY_H_  // NOLINT
 
 #include <thread>
 
-#include "disruptor/sequence.h"
-#include "disruptor/ring_buffer.h"
+#include "sequence.h"
+#include "ring_buffer.h"
 
-namespace disruptor {
+namespace disruptor_memoria {
 
 /*
 // Strategy employed by a {@link Publisher} to wait claim and publish sequences
@@ -104,7 +104,7 @@ class SingleThreadedStrategy {
   int64_t last_claimed_sequence_;
   int64_t last_consumer_sequence_;
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(SingleThreadedStrategy);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(SingleThreadedStrategy);
 };
 
 // Optimised strategy can be used when there is a single publisher thread.
@@ -150,9 +150,9 @@ class MultiThreadedStrategy {
   Sequence last_claimed_sequence_;
   Sequence last_consumer_sequence_;
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(MultiThreadedStrategy);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(MultiThreadedStrategy);
 };
 
 };  // namespace disruptor
 
-#endif  // DISRUPTOR_CLAIM_STRATEGY_H_ NOLINT
+#endif  // DISRUPTOR_MEMORIA_CLAIM_STRATEGY_H_ NOLINT

@@ -30,14 +30,14 @@
   (CACHE_LINE_SIZE_IN_BYTES - sizeof(std::atomic<int64_t>)) / 8
 #define SEQUENCE_PADDING_LENGTH (CACHE_LINE_SIZE_IN_BYTES - sizeof(int64_t)) / 8
 
-#ifndef DISRUPTOR_SEQUENCE_H_  // NOLINT
-#define DISRUPTOR_SEQUENCE_H_  // NOLINT
+#ifndef DISRUPTOR_MEMORIA_SEQUENCE_H_  // NOLINT
+#define DISRUPTOR_MEMORIA_SEQUENCE_H_  // NOLINT
 
 #include <atomic>
 
-#include "disruptor/utils.h"
+#include "utils.h"
 
-namespace disruptor {
+namespace disruptor_memoria {
 
 // special cursor values
 constexpr int64_t kInitialCursorValue = -1L;
@@ -86,7 +86,7 @@ class Sequence {
   // padding
   int64_t padding1_[ATOMIC_SEQUENCE_PADDING_LENGTH];
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(Sequence);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(Sequence);
 };
 
 int64_t GetMinimumSequence(const std::vector<Sequence*>& sequences) {
@@ -102,4 +102,4 @@ int64_t GetMinimumSequence(const std::vector<Sequence*>& sequences) {
 
 };  // namespace disruptor
 
-#endif  // DISRUPTOR_SEQUENCE_H_ NOLINT
+#endif  // DISRUPTOR_MEMORIA_SEQUENCE_H_ NOLINT

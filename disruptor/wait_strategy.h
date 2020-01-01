@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_WAITSTRATEGY_H_  // NOLINT
-#define DISRUPTOR_WAITSTRATEGY_H_  // NOLINT
+#ifndef DISRUPTOR_MEMORIA_WAITSTRATEGY_H_  // NOLINT
+#define DISRUPTOR_MEMORIA_WAITSTRATEGY_H_  // NOLINT
 
 #include <sys/time.h>
 
@@ -34,9 +34,9 @@
 #include <vector>
 #include <mutex>
 
-#include "disruptor/sequence.h"
+#include "sequence.h"
 
-namespace disruptor {
+namespace disruptor_memoria {
 
 /*
 // Strategy employed for a {@link Consumer} to wait on the sequencer's
@@ -170,7 +170,7 @@ class BusySpinStrategy {
 
   virtual void SignalAllWhenBlocking() {}
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(BusySpinStrategy);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(BusySpinStrategy);
 };
 
 template <int64_t S = kDefaultRetryLoops>
@@ -230,7 +230,7 @@ class YieldingStrategy {
     return counter;
   }
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(YieldingStrategy);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(YieldingStrategy);
 };
 
 template <int64_t S = kDefaultRetryLoops, typename D = kDefaultDuration,
@@ -295,7 +295,7 @@ class SleepingStrategy {
     return counter;
   }
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(SleepingStrategy);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(SleepingStrategy);
 };
 
 class BlockingStrategy {
@@ -365,7 +365,7 @@ class BlockingStrategy {
   std::recursive_mutex mutex_;
   std::condition_variable_any consumer_notify_condition_;
 
-  DISALLOW_COPY_MOVE_AND_ASSIGN(BlockingStrategy);
+  MMA_DISALLOW_COPY_MOVE_AND_ASSIGN(BlockingStrategy);
 };
 
 static inline std::function<int64_t()> buildMinSequenceFunction(
@@ -378,4 +378,4 @@ static inline std::function<int64_t()> buildMinSequenceFunction(
 
 };  // namespace disruptor
 
-#endif  // DISRUPTOR_WAITSTRATEGY_H_  NOLINT
+#endif  // DISRUPTOR_MEMORIA_WAITSTRATEGY_H_  NOLINT

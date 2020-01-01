@@ -34,7 +34,7 @@
 #include <stdexcept>
 #include <functional>
 
-namespace disruptor {
+namespace disruptor_memoria {
 
 
 template <typename T, typename SequenceBarrier>
@@ -122,7 +122,7 @@ public:
     const Sequence& consumer_sequence() const {return sequence_;}
     
 private:
-    DISALLOW_COPY_MOVE_AND_ASSIGN ( BatchEventProcessor );
+    MMA_DISALLOW_COPY_MOVE_AND_ASSIGN ( BatchEventProcessor );
 };
 
 

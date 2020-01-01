@@ -31,7 +31,7 @@
 #include <boost/test/unit_test.hpp>
 #include <disruptor/ring_buffer.h>
 
-namespace disruptor {
+namespace disruptor_memoria {
 namespace test {
 
 struct RingBufferFixture {

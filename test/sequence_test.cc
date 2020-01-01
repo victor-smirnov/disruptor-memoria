@@ -33,7 +33,7 @@
 
 #include <disruptor/sequence.h>
 
-namespace disruptor {
+namespace disruptor_memoria {
 namespace test {
 
 struct SequenceFixture {
